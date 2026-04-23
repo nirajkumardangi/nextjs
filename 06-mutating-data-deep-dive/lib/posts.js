@@ -71,7 +71,7 @@ export async function storePost(post) {
   const stmt = db.prepare(`
     INSERT INTO posts (image_url, title, content, user_id)
     VALUES (?, ?, ?, ?)`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   return stmt.run(post.imageUrl, post.title, post.content, post.userId);
 }
 
