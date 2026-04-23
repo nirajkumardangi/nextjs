@@ -1,18 +1,16 @@
-import NewsList from "@/components/news-list";
+// app/news/page.js
+import { Suspense } from "react";
+import NewsListWrapper from "@/components/news-list-wrapper";
 
-export default async function NewsPage() {
-  const response = await fetch("http://localhost:8080/news");
-
-  const news = await response.json();
-
-  if (!response.ok) {
-    throw new Error("Error while fetching news!");
-  }
-
+export default function NewsPage() {
   return (
     <>
-      <h1>News Page</h1>
-      <NewsList news={news} />
+      <h1>News</h1> {/* Shows immediately */}
+      <p>Browse all the latest news</p> {/* Shows immediately */}
+      {/* Only THIS part shows loading */}
+      <Suspense fallback={<p>Loading news...</p>}>
+        <NewsListWrapper />
+      </Suspense>
     </>
   );
 }
