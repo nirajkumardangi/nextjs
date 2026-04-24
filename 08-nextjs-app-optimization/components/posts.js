@@ -8,10 +8,26 @@ import LikeButton from "./like-icon";
 import { togglePostLikeStatus } from "@/actions/posts";
 
 function Post({ post, action }) {
+  function imageLoader(config) {
+    const url = config.src;
+    const urlStart = url.split("upload/")[0];
+    const urlEnd = url.split("upload/")[1];
+    const transformations = `w_200,q_${config.quality}`;
+
+    return `${urlStart}upload/${transformations}/${urlEnd}`;
+  }
+
   return (
     <article className="post">
       <div className="post-image">
-        <Image src={post.image} fill alt={post.title} />
+        <Image
+          loader={imageLoader}
+          src={post.image}
+          width={130}
+          height={100} 
+          alt={post.title}
+          quality={50}
+        />
       </div>
       <div className="post-content">
         <header>
