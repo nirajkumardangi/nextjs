@@ -24,4 +24,7 @@ export const getMessages = nextCatch(
     return db.prepare("SELECT * FROM messages").all();
   }),
   ["messages"],
+  {
+    tags: ["msg"],
+  },
 );
