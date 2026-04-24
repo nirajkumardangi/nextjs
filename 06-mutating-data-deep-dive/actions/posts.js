@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { storePost } from "@/lib/posts";
+import { storePost, updatePostLikeStatus } from "@/lib/posts";
 import { uploadImage } from "@/lib/cloudinary";
 
 // form action
@@ -29,7 +29,7 @@ export async function createPost(prevState, formData) {
   }
 
   let imageUrl;
-  
+
   try {
     imageUrl = await uploadImage(image);
   } catch (error) {
@@ -46,4 +46,9 @@ export async function createPost(prevState, formData) {
   });
 
   redirect("/feed");
+}
+
+// form action for toggle post like
+export async function togglePostLikeStatus(postId) {
+  updatePostLikeStatus(postId, 2);
 }
