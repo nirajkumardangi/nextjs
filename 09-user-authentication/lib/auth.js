@@ -90,3 +90,30 @@ export async function verifyAuth() {
 
   return result;
 }
+
+export async function destroySession() {
+  const cookieStore = await cookies();
+
+  // 1. Verify current session
+  const { session } = await verifyAuth();
+
+  if (!session) {
+    // No session to destroy
+    return;
+  }
+
+  // 2. Tell Lucia to invalidate the session
+  // This deletes the session from the database
+  await lucia.invalidateSession(session.id);
+
+  // 3. Clear the session cookie in the browser
+  const sessionCookie = lucia.createBlankSessionCookie();
+  // "blank" cookie = same name, but empty value + expired date
+  // This effectively deletes the cookie from the browser
+
+  cookieStore.set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
+}
