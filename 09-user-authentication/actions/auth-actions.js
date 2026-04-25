@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createUser } from "@/lib/user";
-import { hashUserPassword } from "@/lib/hash";
+import { createUser, getUserByEmail } from "@/lib/user";
+import { hashUserPassword, verifyPassword } from "@/lib/hash";
 import { createAuthSession } from "@/lib/auth";
 
 export async function signup(prevState, formData) {
@@ -43,4 +43,48 @@ export async function signup(prevState, formData) {
   }
 
   redirect("/training");
+}
+
+export async function login(prevState, formData) {
+  const email = formData.get("email");
+  const password = formData.get("password");
+
+  // 1. Basic validation
+  if (!email || !password) {
+    return {
+      errors: { general: "Please enter your email and password." },
+    };
+  }
+
+  // 2. Find user by email
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser) {
+    return {
+      errors: { general: "Invalid credentials. Please try again." },
+    };
+  }
+
+  // 3. Compare the submitted password with the stored hash
+  const passwordMatch = verifyPassword(existingUser.password, password);
+
+  if (!passwordMatch) {
+    return {
+      errors: { general: "Invalid credentials. Please try again." },
+    };
+  }
+
+  // 4. Password is correct! Create a session
+  await createAuthSession(existingUser.id);
+
+  // 5. Redirect to protected area
+  redirect("/training");
+}
+
+export async function auth(mode, prevState, formData) {
+  if (mode === "login") {
+    return await login(prevState, formData);
+  } else {
+    return await signup(prevState, formData);
+  }
 }
