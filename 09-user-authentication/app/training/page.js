@@ -1,8 +1,19 @@
-import { getTrainings } from '@/lib/training';
+import { redirect } from "next/navigation";
+import { verifyAuth } from "@/lib/auth";
+import { getTrainings } from "@/lib/training";
 
 export default async function TrainingPage() {
-  const trainingSessions = getTrainings();
+  // Verify auth on EVERY request to this page
+  const { user } = await verifyAuth();
 
+  if (!user) {
+    // User is not authenticated — redirect to login
+    redirect("/");
+  }
+
+  const trainingSessions = getTrainings();
+  
+  // User IS authenticated — show the protected content
   return (
     <main>
       <h1>Find your favorite activity</h1>
